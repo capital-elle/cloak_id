@@ -2,8 +2,8 @@
 
 ### Hide your database ids from users of your webapp.
 
-Using sequential ids makes predicting the ids of other resources in your application predictable, and can provide details
-about how your app is growing (how many users, etc.) to current and potential competetors.   Obfuscating identifiers isn't
+Using sequential ids makes predicting the ids of other resources in your application simple, and can provide details
+about how your app is growing (how many users, etc.) to current and potential competitors.   Obfuscating identifiers isn't
 meant to be a primary means of providing security, but it can help to keep confidential information from being completely
 public.
 
