@@ -17,20 +17,52 @@ module CloakId
     self.cloak_id_prefix = (options[:prefix] || 'X')
     self.cloak_id_key = (options[:key])
 
+    alias_method :old_serializable_hash, :serializable_hash
     extend ClassMethods
     include InstanceMethods
   end
 
   module InstanceMethods
 
-    # Return the id for the object in cloaked form.
+    # Return the id for the object in cloaked form.  If the id is nil, then this method will also return nil.
     def cloaked_id
-      "#{self.class.cloak_id_prefix}#{CloakIdEncoder.cloak_base36(self.id, self.class.cloaking_key)}"
+      if self.id.nil?
+        nil
+      else
+        self.class.cloaked_id_for(self.id)
+      end
     end
 
+    def to_param
+      self.cloaked_id
+    end
+
+    def serializable_hash (options = nil)
+      attribute_hash = self.old_serializable_hash (options)
+      attribute_hash['id'] = self.cloaked_id
+
+      #now we want to cloak any fk ids that have been cloaked
+      self.class.reflections.values.each  do |association|
+        if association.klass.respond_to? :cloaked_id_for
+          # this is a related item that has been cloaked
+          if attribute_hash.has_key? association.foreign_key
+            attribute_hash[association.foreign_key] = association.klass.cloaked_id_for(attribute_hash[association.foreign_key])
+          end
+        end
+      end
+      attribute_hash
+    end
   end
 
   module ClassMethods
+
+    # class method to create the cloaked id.  This will be used when generation a new cloaked id either on demand by the
+    # object itself, or when an association wants to hide the id.
+
+    def cloaked_id_for(id)
+      "#{self.cloak_id_prefix}#{CloakIdEncoder.cloak_base36(id, self.cloaking_key)}"
+    end
+
     # Return the key that we're going to use in the twiddle function during reversible hashing
     # this value will be based on the CRC check sum of the model name unless one is provided by
     # the user.
@@ -49,7 +81,6 @@ module CloakId
       decloaked_id = CloakIdEncoder.decloak_base36(cloaked_id[self.cloak_id_prefix.length..-1], self.cloaking_key)
       self.find(decloaked_id)
     end
-
   end
 end
 

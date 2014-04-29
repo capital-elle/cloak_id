@@ -16,15 +16,6 @@ describe CloakId::CloakIdEncoder do
   end
 
 
-  it 'should obfuscate provide the obfuscated id on an active model' do
-    test_model = make_model()
-    cloaked_id = test_model.cloaked_id
-
-    expect(cloaked_id).to start_with 'X'
-    decloaked_id = CloakId::CloakIdEncoder.decloak_base36(cloaked_id[1..-1],test_model.cloak_id_key)
-    expect(decloaked_id).to eql test_model.id
-  end
-
   it 'should enforce a minimum length when using modified base 35 encoding' do
     cloaked_v = CloakId::CloakIdEncoder.cloak_mod_35(10000,0,40)
 

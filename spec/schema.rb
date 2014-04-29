@@ -5,4 +5,7 @@ ActiveRecord::Schema.define do
     t.string :test_field
   end
 
+  create_table :test_associations, :force => true do |t|
+    t.references :test_model
+  end
 end
