@@ -15,7 +15,13 @@ module CloakId
   def cloak_id(options = {})
     cattr_accessor :cloak_id_prefix, :cloak_id_key
     self.cloak_id_prefix = (options[:prefix] || 'X')
-    self.cloak_id_key = (options[:key])
+    key = options[:key]
+
+    if (!key.nil? and key.is_a? String)
+      key = Zlib::crc32(key)
+    end
+
+    self.cloak_id_key = key
 
     alias_method :old_serializable_hash, :serializable_hash
     extend ClassMethods
