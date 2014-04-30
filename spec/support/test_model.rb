@@ -1,4 +1,5 @@
-
+# Here lie model classes that help with the unit tests.  We'll use these to create certain sub-categories of
+# models that have cloaked ids.
 class TestModel < ActiveRecord::Base
   cloak_id
   has_many :test_associations

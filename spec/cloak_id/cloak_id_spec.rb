@@ -17,7 +17,7 @@ describe CloakId do
     cloaked_id = test_model.cloaked_id
 
     expect(cloaked_id).to start_with 'X'
-    decloaked_id = CloakId::CloakIdEncoder.decloak_base36(cloaked_id[1..-1],test_model.cloak_id_key)
+    decloaked_id = CloakId::CloakIdEncoder.decloak_mod_35(cloaked_id[1..-1],test_model.cloak_id_key)
     expect(decloaked_id).to eql test_model.id
   end
 
@@ -79,5 +79,14 @@ describe CloakId do
     # This is ugly, but since this is a single association on the model, we want the first item in the "has many"
     expect(model_json['test_associations'][0]['id']).to eql association.cloaked_id
     expect(model_json['test_associations'][0]['test_model_id']).to eql model.cloaked_id
+  end
+
+  it 'should use the right find technique when presented with the cloaked vs. the decloaked id.' do
+    model = TestModel.create
+    model_2 = TestModel.create
+    expect(TestModel.find(model.id)).to eql model
+    expect(TestModel.find(model.cloaked_id)).to eql model
+    expect(TestModel.find([model.id, model_2.id])).to eql [model,model_2]
+    expect(TestModel.find([model.cloaked_id, model_2.cloaked_id])).to eql [model,model_2]
   end
 end

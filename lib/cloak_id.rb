@@ -28,6 +28,7 @@ module CloakId
     self.cloak_id_key = key
 
     alias_method :old_serializable_hash, :serializable_hash
+    #alias_method :find_with_raw_id, :find
     extend ClassMethods
     include InstanceMethods
   end
@@ -70,7 +71,7 @@ module CloakId
     # object itself, or when an association wants to hide the id.
 
     def cloaked_id_for(id)
-      "#{self.cloak_id_prefix}#{CloakIdEncoder.cloak_base36(id, self.cloaking_key)}"
+      "#{self.cloak_id_prefix}#{CloakIdEncoder.cloak_mod_35(id, self.cloaking_key)}"
     end
 
     # Return the key that we're going to use in the twiddle function during reversible hashing
@@ -84,12 +85,36 @@ module CloakId
     # Perform a find request based on the cloaked id.  This command will verify that the cloaked id is in the
     # correct format to allow it to be found.   If it is not then the requested record cannot be found, and a
     # RecordNotFound error will be raised.
-    def find_by_cloaked_id(cloaked_id)
+    def find_by_cloaked_id(cloaked_id,options={})
       # make sure this is a valid id
       raise new ActiveRecord::RecordNotFound("Cloaked Id does not have a valid format.") unless cloaked_id.start_with? self.cloak_id_prefix
 
-      decloaked_id = CloakIdEncoder.decloak_base36(cloaked_id[self.cloak_id_prefix.length..-1], self.cloaking_key)
+      decloaked_id = decloak_id_for_class(cloaked_id)
       self.find(decloaked_id)
+    end
+
+    def decloak_id_for_class(cloaked_id)
+      CloakIdEncoder.decloak_mod_35(cloaked_id[self.cloak_id_prefix.length..-1], self.cloaking_key)
+    end
+
+    # This is a "Smart" version of the find method.  It takes a look at the id, and figures out if it might be a cloaked
+    # id.  If it is, then it will perform the search with the decloaked value.  Otherwise it will treat it as a "normal"
+    # identifier.
+    def find(arg)
+      if arg.is_a? String and arg.starts_with? self.cloak_id_prefix
+        find_by_cloaked_id arg
+      elsif arg.is_a? Array
+        arg_list = arg.map do |entry|
+          if entry.is_a? String and entry.starts_with? self.cloak_id_prefix
+           decloak_id_for_class entry
+          else
+            entry
+          end
+        end
+        super arg_list
+      else
+        super arg
+      end
     end
   end
 end
