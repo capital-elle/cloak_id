@@ -30,6 +30,15 @@ describe CloakId do
   end
 
 
+  it 'should raise an error when using a prefix that does not start with a letter' do
+    sample_model = UncloakedModel.new
+    expect do
+      class << sample_model
+        cloak_id prefix:'123'
+      end
+    end.to raise_error(CloakId::CloakingError)
+  end
+
   it 'should return null for the cloaked id when there is no id in place' do
     model = TestModel.new
 

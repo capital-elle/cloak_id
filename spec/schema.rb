@@ -8,4 +8,8 @@ ActiveRecord::Schema.define do
   create_table :test_associations, :force => true do |t|
     t.references :test_model
   end
+
+  create_table :uncloaked_models, :force => true do |t|
+    t.string :extra_field_for_sample
+  end
 end

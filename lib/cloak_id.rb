@@ -2,6 +2,7 @@ require "cloak_id/version"
 require "active_record"
 require "zlib"
 require "cloak_id/cloak_id_encoder"
+require "cloak_id/errors"
 
 module CloakId
 
@@ -15,6 +16,9 @@ module CloakId
   def cloak_id(options = {})
     cattr_accessor :cloak_id_prefix, :cloak_id_key
     self.cloak_id_prefix = (options[:prefix] || 'X')
+
+    raise CloakingError, 'Prefix values must start with a letter.' if (/^[A-Za-z]/ =~ self.cloak_id_prefix).nil?
+
     key = options[:key]
 
     if (!key.nil? and key.is_a? String)
