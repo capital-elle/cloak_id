@@ -29,6 +29,9 @@ describe CloakId do
     expect(test_association.cloaked_id).to start_with 'L'
   end
 
+  it 'should be able to convert a string key into a numeric key for cloaking' do
+    expect(TestModel2.cloaking_key).to eql Zlib::crc32('my_key')
+  end
 
   it 'should raise an error when using a prefix that does not start with a letter' do
     sample_model = UncloakedModel.new

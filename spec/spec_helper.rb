@@ -8,6 +8,7 @@ Bundler.setup
 
 require 'cloak_id' # and any other gems you need
 require 'support/test_model'
+require 'zlib'
 
 RSpec.configure do |config|
 

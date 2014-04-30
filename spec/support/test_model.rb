@@ -11,3 +11,9 @@ end
 
 class UncloakedModel < ActiveRecord::Base
 end
+
+class TestModel2 < ActiveRecord::Base
+  self.table_name = 'test_models'
+
+  cloak_id key:'my_key'
+end
