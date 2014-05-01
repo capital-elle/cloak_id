@@ -15,6 +15,11 @@ describe CloakId::CloakIdEncoder do
     expect(CloakId::CloakIdEncoder.cloak(cloaked_v,0x1234)).to eql 0xffff25
   end
 
+  it 'should be able to perform a base 36 encoding and decoding successfully' do
+    cloaked_v = CloakId::CloakIdEncoder.cloak_base36(10000,0)
+    decloaked_v = CloakId::CloakIdEncoder.decloak_base36(cloaked_v,0)
+    expect(decloaked_v).to eql 10000
+  end
 
   it 'should enforce a minimum length when using modified base 35 encoding' do
     cloaked_v = CloakId::CloakIdEncoder.cloak_mod_35(10000,0,40)
