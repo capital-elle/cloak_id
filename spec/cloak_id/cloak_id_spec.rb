@@ -16,8 +16,8 @@ describe CloakId do
     test_model = make_model()
     cloaked_id = test_model.cloaked_id
 
-    expect(cloaked_id).to start_with 'X'
-    decloaked_id = CloakId::CloakIdEncoder.decloak_mod_35(cloaked_id[1..-1],test_model.cloak_id_key)
+    expect(cloaked_id).to start_with 'TM'
+    decloaked_id = CloakId::CloakIdEncoder.decloak_mod_35(cloaked_id[2..-1],test_model.cloak_id_key)
     expect(decloaked_id).to eql test_model.id
   end
 
@@ -25,7 +25,7 @@ describe CloakId do
     test_model = TestModel.create
     test_association = TestAssociation.create
 
-    expect(test_model.cloaked_id).to start_with 'X'     #default
+    expect(test_model.cloaked_id).to start_with 'TM'     #default
     expect(test_association.cloaked_id).to start_with 'L'
   end
 

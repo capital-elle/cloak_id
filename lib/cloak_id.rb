@@ -15,7 +15,7 @@ module CloakId
   #        a key based on the model name.  This could result in multiple applications cloaking ids in the same way.
   def cloak_id(options = {})
     cattr_accessor :cloak_id_prefix, :cloak_id_key
-    self.cloak_id_prefix = (options[:prefix] || 'X')
+    self.cloak_id_prefix = (options[:prefix] || model_name.singular.split('_').slice(0,2).inject('') {|prefix,word| prefix + word[0,1].upcase})
 
     raise CloakingError, 'Prefix values must start with a letter.' if (/^[A-Za-z]/ =~ self.cloak_id_prefix).nil?
 
