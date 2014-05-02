@@ -29,6 +29,14 @@ Or install it yourself as:
 
     $ gem install cloak_id
 
+To seed the random key used during cloaking, execute the following command
+
+    rails generate cloak_id::install
+
+This command is optional, but if it not done then your application will make use of a global default key, leading to identical
+cloaked ids being generated for identically named models.  This value will be used to seed the transformation, and help ensure
+the quality of the obfuscation.
+
 ## Usage
 
 In your model files (that inherit from Active Record) add the 'cloak_id' call to enable the obfuscating of the ids.
@@ -36,6 +44,21 @@ In your model files (that inherit from Active Record) add the 'cloak_id' call to
     class User < ActiveRecord::Base
       cloak_id
     end
+
+
+## What the gem does
+
+The cloak_id gem provides a way to "cloak" your identifiers.   This doesn't provide any real security, but instead makes it
+less obvious to what the underlying database id of a resource really is.  This is desirable in cases where you want to make
+it more difficult for users to guess identifiers, or for observers to judge how fast your application is growing.
+
+This technique does not provide any real security - it only makes it more difficult for casual observers to guess resource
+identifiers.
+
+The logic behind the transformation is to use a prime number to generate a simple, yet reversible hash of the database id.
+That newly obscured hash is then encoded as a string, to further hide its meaning.  This will happen when generating forms
+from ActiveRecords (when using the entire object or the to_param call), as well as when encoding the object in JSON format.
+
 
 ## Customizing your cloaking
 
@@ -50,15 +73,15 @@ The cloak_id method call takes an option hash that controls how the cloaking occ
     <td>key</td>
     <td>The key to use for obfuscating identifier.   This can be either an integer or a string.   This is an optional
         parameter.  If the user does not provide one, then this will be based on the name of the model itself.  This
-        means that "common" models (e.g. User) may have the same obfuscated values across different web apps.  To prevent
-        this, the key should be explictly provided.
+        means that "common" models (e.g. User) may have the same obfuscated values across different web apps.  This
+        can be prevented by passing in a value to this parameter or by setting a seed (by running rails generate cloak_id install)
     </td>
   </tr>
   <tr>
     <td> prefix </td>
     <td> Obfuscating the identifier results in a string.  To better help developers understand what type of resource
-         if being identified, an optional prefix may be specified.   If none is provided, then all cloaked identifiers
-         will start with the letter 'X'.  This prefix must start with a alphabetic character.
+         if being identified, an optional prefix may be specified.   If none is provided, then a prefix will be created
+         based on the name of the model.  This prefix must start with a alphabetic character.
     </td>
   </tr>
 </table>
@@ -89,22 +112,6 @@ the find_by_cloaked_id method.   If it is numeric, or if it does not begin with 
 back to use the out-of-the-box find functionality.
 
 Because of this logic, most cases will work without any changes to the code that makes use of the cloaked resource.
-
-## What the gem does:
-
-The cloak_id gem provides a way to "cloak" your identifiers.   This doesn't provide any real security, but instead makes it
-less obvious to what the underlying database id of a resource really is.  This is desirable in cases where you want to make
-it more difficult for users to guess identifiers, or for observers to judge how fast your application is growing.
-
-This technique does not provide any real security - it only makes it more difficult for casual observers to guess resource
-identifiers.
-
-The logic behind the transformation is to use a prime number to generate a simple, yet reversible hash of the database id.
-That newly obscured hash is then encoded as a string, to further hide its meaning.  This will happen when generating forms
-from ActiveRecords (when using the entire object or the to_param call), as well as when encoding the object in JSON format.
-
-
-
 
 ## Contributing
 

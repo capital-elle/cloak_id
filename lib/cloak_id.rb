@@ -78,7 +78,7 @@ module CloakId
     # this value will be based on the CRC check sum of the model name unless one is provided by
     # the user.
     def cloaking_key
-      self.cloak_id_key = Zlib::crc32(self.model_name) unless self.cloak_id_key.is_a? Integer
+      self.cloak_id_key = Zlib::crc32(self.model_name)^CloakIdEncoder.cloak_id_default_key unless self.cloak_id_key.is_a? Integer
       self.cloak_id_key
     end
 

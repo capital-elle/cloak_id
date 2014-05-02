@@ -37,4 +37,14 @@ describe CloakId::CloakIdEncoder do
     expect(cloaked_v).to_not include 'Z'
     expect(cloaked_v).to have_at_least(5).characters
   end
+
+  it 'should make use of the configured default key when none is provided' do
+    key_0_cloaked = CloakId::CloakIdEncoder.cloak_mod_35(1234)
+    CloakId::CloakIdEncoder.cloak_id_default_key = 4321
+    key_4321_cloaked = CloakId::CloakIdEncoder.cloak_mod_35(1234)
+    key_4321_decloaked = CloakId::CloakIdEncoder.decloak_mod_35(key_4321_cloaked)
+
+    expect(key_4321_decloaked).to eql 1234
+    expect(key_0_cloaked).to_not eql key_4321_cloaked
+  end
 end
