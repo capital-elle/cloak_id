@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["elle@pandromos.com"]
   spec.summary       = %q{Gem to help obfuscate Active Record Ids.}
   spec.description   = %q{The cloak id gem allows developers to easily hide the actual (database) id of resources through obfuscation.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/elleleb/cloak_id"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
