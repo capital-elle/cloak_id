@@ -6,9 +6,9 @@ require 'cloak_id/version'
 Gem::Specification.new do |spec|
   spec.name          = "cloak_id"
   spec.version       = CloakId::VERSION
-  spec.authors       = ["Elle LeBeau"]
+  spec.authors       = ["Elle L."]
   spec.email         = ["elle@pandromos.com"]
-  spec.summary       = %q{Gem to help obfuscate Active Record Ids.}
+  spec.summary       = %q{Gem to help obfuscate Active Record ids.}
   spec.description   = %q{The cloak id gem allows developers to easily hide the actual (database) id of resources through obfuscation.}
   spec.homepage      = "https://github.com/elleleb/cloak_id"
   spec.license       = "MIT"

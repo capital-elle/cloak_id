@@ -17,7 +17,7 @@ module CloakId
     cattr_accessor :cloak_id_prefix, :cloak_id_key
     self.cloak_id_prefix = (options[:prefix] || model_name.singular.split('_').slice(0,2).inject('') {|prefix,word| prefix + word[0,1].upcase})
 
-    raise CloakingError, 'Prefix values must start with a letter.' if (/^[A-Za-z]/ =~ self.cloak_id_prefix).nil?
+    raise CloakingError, 'Prefix values must start with a letter.' unless (/^[A-Za-z]/ =~ self.cloak_id_prefix)
 
     key = options[:key]
 
@@ -28,7 +28,6 @@ module CloakId
     self.cloak_id_key = key
 
     alias_method :old_serializable_hash, :serializable_hash
-    #alias_method :find_with_raw_id, :find
     extend ClassMethods
     include InstanceMethods
   end
@@ -97,16 +96,22 @@ module CloakId
       CloakIdEncoder.decloak_mod_35(cloaked_id[self.cloak_id_prefix.length..-1], self.cloaking_key)
     end
 
+    ## method to check whether an id might be a valid cloaked id.
+    def is_cloaked_id?(id)
+      id.is_a? String and id.starts_with? self.cloak_id_prefix
+    end
+
     # This is a "Smart" version of the find method.  It takes a look at the id, and figures out if it might be a cloaked
     # id.  If it is, then it will perform the search with the decloaked value.  Otherwise it will treat it as a "normal"
     # identifier.
     def find(arg)
-      if arg.is_a? String and arg.starts_with? self.cloak_id_prefix
+      arg_is_cloaked_id = is_cloaked_id? arg
+      if arg_is_cloaked_id
         find_by_cloaked_id arg
       elsif arg.is_a? Array
         arg_list = arg.map do |entry|
-          if entry.is_a? String and entry.starts_with? self.cloak_id_prefix
-           decloak_id_for_class entry
+          if is_cloaked_id? entry
+            decloak_id_for_class entry
           else
             entry
           end

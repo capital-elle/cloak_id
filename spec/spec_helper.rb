@@ -4,14 +4,14 @@ require 'rubygems'
 require 'bundler/setup'
 require 'active_record'
 require 'pry'
-Bundler.setup
 
+Bundler.setup
 require 'cloak_id' # and any other gems you need
 require 'support/test_model'
 require 'zlib'
 
 RSpec.configure do |config|
-
+  config.debug = false
   config.color_enabled = true
   config.formatter = 'documentation'
 end
