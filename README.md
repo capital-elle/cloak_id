@@ -59,7 +59,7 @@ The logic behind the transformation is to use a prime number to generate a simpl
 That newly obscured hash is then encoded as a string, to further hide its meaning.  This will happen when generating forms
 from ActiveRecords (when using the entire object or the to_param call), as well as when encoding the object in JSON format.
 
-
+The obfuscation techinque is largely based on the one used by the Python Project "opaque_id" (https://github.com/marekweb/opaque-id) by Marek Z., and released under the MIT License.
 ## Customizing your cloaking
 
 The cloak_id method call takes an option hash that controls how the cloaking occurs:
