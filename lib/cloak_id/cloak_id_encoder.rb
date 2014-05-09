@@ -7,6 +7,8 @@ module CloakId
 
     cattr_accessor :cloak_id_default_key
 
+    ## The twiddle and cloak methods are based on Marek Z.'s "Opaque Id" code (https://github.com/marekweb/opaque-id)
+
     # Basic hashing function to go back and forth between a hashed value.
     def self.twiddle(val,key)
       hashed = (key ^ val) * TWIDDLE_PRIME
