@@ -89,4 +89,29 @@ describe CloakId do
     expect(TestModel.find([model.id, model_2.id])).to eql [model,model_2]
     expect(TestModel.find([model.cloaked_id, model_2.cloaked_id])).to eql [model,model_2]
   end
+
+  it 'should return true for items that exist and false for those that don\'t when exists? is called' do
+     model = TestModel.create
+
+    expect(TestModel.exists?(model.cloaked_id)).to be_true
+    expect(TestModel.exists?("#{model.cloaked_id}XX")).to be_false
+  end
+
+  it 'should be able to handle the "exists" clause in hash queries as well as alone' do
+    model = TestModel.create
+
+    expect(TestModel.exists?(id:model.cloaked_id)).to be_true
+    expect(TestModel.exists?(id:"#{model.cloaked_id}XX")).to be_false
+  end
+
+  it 'should still handle cases for both hashes and "normal" exists? calls when we use the non cloaked id' do
+    model = TestModel.create
+
+    expect(TestModel.exists?(model.id)).to be_true
+    expect(TestModel.exists?(model.id+3)).to be_false
+
+    expect(TestModel.exists?(id:model.id)).to be_true
+    expect(TestModel.exists?(id:(model.id+3))).to be_false
+
+    end
 end

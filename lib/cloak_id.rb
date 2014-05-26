@@ -121,6 +121,27 @@ module CloakId
         super arg
       end
     end
+
+    ## Extends the ability of the class to handle the exists? method when we pass in a cloaked id.  This change will
+    ## work when passed in as a single argument as well as if it is part of a hash.   The method is not (currently)
+    ## smart enough to handle array based arguments
+    def exists?(arg)
+      arg_is_cloaked_id = is_cloaked_id? arg
+      if arg_is_cloaked_id
+        decloked_id = decloak_id_for_class(arg)
+        super decloked_id
+      elsif arg.is_a? Hash
+        if (arg[:id].nil? == false and is_cloaked_id? arg[:id])
+          copied_hash = arg.clone
+          copied_hash[:id] = decloak_id_for_class copied_hash[:id]
+          super copied_hash
+        else
+          super arg   # is a hash but not a cloaked it
+        end
+      else
+        super arg
+      end
+    end
   end
 end
 
